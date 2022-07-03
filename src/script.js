@@ -36,7 +36,6 @@ container.appendChild(renderer.domElement) // add the renderer to html div
 /////////////////////////////////////////////////////////////////////////
 ///// CAMERAS CONFIG
 const camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 1, 100)
-camera.position.set(34,16,-20)
 scene.add(camera)
 
 /////////////////////////////////////////////////////////////////////////
@@ -55,6 +54,13 @@ window.addEventListener('resize', () => {
 ///// CREATE ORBIT CONTROLS
 const controls = new OrbitControls(camera, renderer.domElement)
 
+camera.position.set(-12, 1.2, -19)
+let camLookat = new THREE.Vector3(20, -3, -40);
+// //   camera.lookAt has no effect when using OrbitControls: https://stackoverflow.com/a/45764133/6908282
+// camera.lookAt(camLookat);
+controls.target = camLookat;
+controls.update();
+
 /////////////////////////////////////////////////////////////////////////
 ///// SCENE LIGHTS
 const ambient = new THREE.AmbientLight(0xa0a0fc, 0.82)
@@ -66,9 +72,11 @@ scene.add(sunLight)
 
 /////////////////////////////////////////////////////////////////////////
 ///// LOADING GLB/GLTF MODEL FROM BLENDER
-loader.load('models/gltf/starter-scene.glb', function (gltf) {
-
+let blenderObjects = [];
+loader.load('models/gltf/IIT_KGP_Campus.glb', function (gltf) {
     scene.add(gltf.scene)
+    blenderObjects = gltf.scene.children;
+    console.log(blenderObjects)
 })
 
 /////////////////////////////////////////////////////////////////////////
@@ -76,10 +84,10 @@ loader.load('models/gltf/starter-scene.glb', function (gltf) {
 function introAnimation() {
     controls.enabled = false //disable orbit controls to animate the camera
     
-    new TWEEN.Tween(camera.position.set(26,4,-35 )).to({ // from camera position
-        x: 16, //desired x position to go
-        y: 50, //desired y position to go
-        z: -0.1 //desired z position to go
+    new TWEEN.Tween(camera.position.set(1, 1.2, -14)).to({ // from camera position
+        x: -12, //desired x position to go
+        y: 1.2, //desired y position to go
+        z: -19 //desired z position to go
     }, 6500) // time take to animate
     .delay(1000).easing(TWEEN.Easing.Quartic.InOut).start() // define delay, easing
     .onComplete(function () { //on finish animation
@@ -96,11 +104,11 @@ introAnimation() // call intro animation on start
 function setOrbitControlsLimits(){
     controls.enableDamping = true
     controls.dampingFactor = 0.04
-    controls.minDistance = 35
-    controls.maxDistance = 60
+    // controls.minDistance = 35
+    // controls.maxDistance = 60
     controls.enableRotate = true
     controls.enableZoom = true
-    controls.maxPolarAngle = Math.PI /2.5
+    controls.maxPolarAngle = Math.PI / 1.5
 }
 
 /////////////////////////////////////////////////////////////////////////
